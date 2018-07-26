@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Register Domain{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<h2>Choose the domains you want to buy</h2>
+
+<form method="post" action="{{ url_for('domains.purchase') }}">
+	<table class="table">
+	<thead>
+		<th>Domain</th>
+		<th>Price</th>
+		<th>Available</th>
+		<th>Buy</th>
+	</thead>
+	{% for domain in result %}
+	  <tr>
+		<td>{{ domain }}</td>
+        <td>Price
+            &pound;{{ "%.2f" | format(result[domain][1]['price']) }}
+        </td>
+		<td>{% if result[domain][0]['status'] %}
+			Available 
+			{% else %}
+			Already Taken 
+            {% endif %}
+		</td>
+		<td>{% if result[domain][0]['status'] %}
+        <div class="form-group">
+            <input type="checkbox" name="{{ domain }}" checked />
+        </div>
+			{% endif %}
+		</td>
+
+	  </tr>
+	{% endfor %}
+	</table>
+
+	<div class="form-group">
+		<label for="name">Name</label>
+		<input name="name" id="name" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="email">Email</label>
+		<input name="email" type="email" id="email" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="telno">Phone</label>
+		<input name="telno" type="telco" id="telno" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="company">Company</label>
+		<input name="company" id="company" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="addr1">Address Line 1</label>
+		<input name="addr1" id="addr1" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="city">City</label>
+		<input name="city" id="city" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="state">State</label>
+		<input name="state" id="state" class="form-control" required>
+	<div>
+	<div class="form-group">
+		<label for="zip">Postcode</label>
+		<input name="zip" id="zip" class="form-control" required>
+	</div>
+	<div class="form-group">
+		<label for="country">Country</label>
+		<input name="country" id="country" class="form-control" required>
+	</div>
+	<input type="submit" value="Purchase">
+</form>
+{% endblock %}
