@@ -52,7 +52,7 @@ def purchase():
         zip = request.form['zip']
         import pdb;pdb.set_trace()
         result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                      params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo',
+                      params = {'auth-id':1697, 'auth-password':'',
                                 'domain-name':session['domain'], 'tld':'co.uk',
                                 'period':1, 'mail':email, 'name':name,
                                 'company':company, 'address':addr1, 'city':city,
@@ -64,10 +64,10 @@ def purchase():
             domain_name = session['domain'] + '.co.uk'
             result = requests.post('https://api.cloudns.net/dns/register.json', 
                                    params = {'auth-id':1697,
-                                             'auth-password':'WQ5T\DH5R%mUo',
+                                             'auth-password':'abc',
                                              'domain-name':domain_name,
                                              'zone-type':'master'})
-            'Success' in result.text:
+            if 'Success' in result.text:
                 print "DNS Zone created sucessfully"
 
 
