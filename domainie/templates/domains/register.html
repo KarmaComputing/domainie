@@ -10,13 +10,14 @@
 <h2>Choose the domains you want to buy</h2>
 
 <form method="post" action="{{ url_for('domains.purchase') }}" id="payment-form">
-	<table class="table">
-	<thead>
-		<th>Domain</th>
-		<th>Price</th>
-		<th>Available</th>
-		<th>Buy</th>
-	</thead>
+	<table class="table table-borderless table-light table-responsive">
+	<thead class="thead-dark">
+		<th scope="col">Domain</th>
+		<th scope="col">Price</th>
+		<th scope="col">Available</th>
+		<th scope="col">Buy</th>
+    </thead>
+    <tbody>
 	{% for domain in result %}
 	  <tr>
 		<td>{{ domain }}</td>
@@ -37,7 +38,8 @@
 		</td>
 
 	  </tr>
-	{% endfor %}
+      {% endfor %}
+    </tbody>
 	</table>
 
 	<div class="form-group">
