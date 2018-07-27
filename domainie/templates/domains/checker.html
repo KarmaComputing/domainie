@@ -1,13 +1,35 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Checker{% endblock %}</h1>
+  <h1>{% block title %}Website Address Purchase{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+
+  <p>Buy your website address (these are called domain names) using this
+      tool.</p>
+  <p>
+      Steps:
+  </p>
+
+  <ol>
+      <li>Check the website address you want is available. Below</li>
+      <ul><li>Not all addesses are available, for example, google.co.uk is
+              already taken (obviously!).</li>
+          <li>Purchase your address quickly, <em>before someone else does!</em></li>
+      </ul>
+      </li>
+    <li>Purchase your .co.uk and .com website address.</li>
+  </ol>
+
   <form method="post">
-    <label for="domain">Domain</label>
-    <input name="domain" id="domain" required>
-    <input type="submit" value="Check">
+    <div class="form-group">
+        <label for="domain">Enter the address you want:</label>
+        <input name="domain" class="form-control" id="domain"
+        placeholder="example.co.uk" required>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-success" value="Check availability">
+    </div>
   </form>
 {% endblock %}

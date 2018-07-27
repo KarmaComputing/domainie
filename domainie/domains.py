@@ -79,7 +79,7 @@ def purchase():
             company = request.form['company']
             addr1 = request.form['addr1']
             city = request.form['city']
-            state = request.form['state']
+            state = "UK"
             zip = request.form['zip']
 
             if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':

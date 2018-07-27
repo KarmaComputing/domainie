@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-<title>{% block title %}{% endblock %} - Flaskr</title>
+<title>{% block title %}{% endblock %} - Karma Computing</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link ref="stylesheet"
 href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -16,9 +16,10 @@ href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 <script src="https://js.stripe.com/v3/"></script> 
 </head>
 <body>
+    <img src="{{ url_for('static', filename='karma-logo.svg') }}" height="45px"
+    width="90.41px" />
 <div class="container">
 <nav>
-  <h1>Domainie</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
