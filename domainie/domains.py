@@ -23,6 +23,7 @@ def get_domain_price(tdl, withVAT=True):
     import pdb;pdb.set_trace()
     return round(price * 1.4, 2)
 
+@bp.route('/', methods=('GET', 'POST'))
 @bp.route('/check', methods=('GET', 'POST'))
 def check_availability():
     if request.method == 'POST':
