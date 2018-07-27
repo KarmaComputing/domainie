@@ -1,0 +1,4 @@
+include domainie/schema.sql
+include domainie/templates
+global-exclude *.pyc
+global-exclude *.swp

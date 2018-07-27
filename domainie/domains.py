@@ -9,6 +9,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from domainie.db import get_db
+from flask import current_app as app
 
 bp = Blueprint('domains', __name__, url_prefix=None)
 
@@ -20,7 +21,6 @@ def get_domain_price(tdl, withVAT=True):
     prices = json.loads(prices)
 
     price = prices[tdl]['price_registration']
-    import pdb;pdb.set_trace()
     return round(price * 1.4, 2)
 
 @bp.route('/', methods=('GET', 'POST'))
@@ -46,9 +46,9 @@ def check_availability():
         # Add prices to result dicts
         result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
         result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
-
+        stripe_pub_key = app.config['STRIPE_PUP_KEY']
         return render_template('domains/register.html', result = result,
-                               prices=prices)
+                               prices=prices, stripe_pub_key=stripe_pub_key)
     return render_template('domains/checker.html')
 
 @bp.route('/purchase', methods=('GET', 'POST'))
@@ -63,10 +63,9 @@ def purchase():
             price = get_domain_price(tdl)
             price = price + price
         amount = int(price * 100)
-        import pdb;pdb.set_trace()
 
         # Create charge, then register domain(s)
-        stripe.api_key = "sk_test_D1dVenFiwWCObU7vUFHbWgdN"
+        stripe.api_key = app.config['STRIPE_PRIV_KEY']
         stripe_token = request.form['stripeToken']
         charge = stripe.Charge.create(
             amount = amount,
