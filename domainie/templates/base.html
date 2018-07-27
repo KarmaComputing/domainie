@@ -33,7 +33,7 @@ href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
     {% block header %}{% endblock %}
   </header>
   {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
+    <div class="alert alert-success">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
 </section>

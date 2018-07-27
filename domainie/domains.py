@@ -22,11 +22,19 @@ def get_domain_price(tdl, withVAT=True):
                                     }).text
     prices = json.loads(prices)
     price = prices[tdl]['price_registration']
-    return round(price * 1.4, 2)
+    price = round(price * 1.4, 2)
+    if session['discount']:
+        price = price * 0.8 #20% discount
+    return price
 
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET', 'POST'), defaults={'path':''})
+@bp.route('/<path:path>', methods=('GET', 'POST'))
 @bp.route('/check', methods=('GET', 'POST'))
-def check_availability():
+def check_availability(path):
+    if 'offer' in path.lower():
+        session['discount'] = True
+        flash('Congrats! Your 20% discount has been registered.')
+
     if request.method == 'POST':
 
         domain = request.form['domain']
