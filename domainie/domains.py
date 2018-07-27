@@ -17,7 +17,9 @@ def get_domain_price(tdl, withVAT=True):
 
     # Get prices and apply margin
     prices = requests.post('https://api.cloudns.net/domains/pricing-list.json',
-                           params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo'}).text
+                           params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
+                                     'auth-password':app.config['CLOUDNS_AUTH_PASSWORD']
+                                    }).text
     prices = json.loads(prices)
 
     price = prices[tdl]['price_registration']
@@ -37,18 +39,15 @@ def check_availability():
             pass
 
         result = json.loads(requests.post('https://api.cloudns.net/domains/check-available.json',
-                      params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo',
+                      params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
                                 'name':domain, 'tld[]':['co.uk', 'com']}).text)
-        # Get prices and apply margin
-        prices = requests.post('https://api.cloudns.net/domains/pricing-list.json',
-                               params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo'}).text
-        prices = json.loads(prices)
         # Add prices to result dicts
         result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
         result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
         stripe_pub_key = app.config['STRIPE_PUP_KEY']
         return render_template('domains/register.html', result = result,
-                               prices=prices, stripe_pub_key=stripe_pub_key)
+                               stripe_pub_key=stripe_pub_key)
     return render_template('domains/checker.html')
 
 @bp.route('/purchase', methods=('GET', 'POST'))
@@ -84,7 +83,7 @@ def purchase():
             state = request.form['state']
             zip = request.form['zip']
             result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                          params = {'auth-id':1697, 'auth-password':'',
+                          params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 'auth-password':'',
                                     'domain-name':session['domain'], 'tld':'co.uk',
                                     'period':1, 'mail':email, 'name':name,
                                     'company':company, 'address':addr1, 'city':city,
@@ -95,8 +94,8 @@ def purchase():
                 # Create DNS Zone for each domain
                 domain_name = session['domain'] + '.co.uk'
                 result = requests.post('https://api.cloudns.net/dns/register.json', 
-                                       params = {'auth-id':1697,
-                                                 'auth-password':'abc',
+                                       params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                                 'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
                                                  'domain-name':domain_name,
                                                  'zone-type':'master'})
                 if 'Success' in result.text:
