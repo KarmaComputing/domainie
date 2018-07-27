@@ -12,6 +12,17 @@ from domainie.db import get_db
 
 bp = Blueprint('domains', __name__, url_prefix=None)
 
+def get_domain_price(tdl, withVAT=True):
+
+    # Get prices and apply margin
+    prices = requests.post('https://api.cloudns.net/domains/pricing-list.json',
+                           params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo'}).text
+    prices = json.loads(prices)
+
+    price = prices[tdl]['price_registration']
+    import pdb;pdb.set_trace()
+    return round(price * 1.4, 2)
+
 @bp.route('/check', methods=('GET', 'POST'))
 def check_availability():
     if request.method == 'POST':
@@ -32,8 +43,8 @@ def check_availability():
                                params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo'}).text
         prices = json.loads(prices)
         # Add prices to result dicts
-        result[result.keys()[0]] = [result[result.keys()[0]], {'price': prices['co.uk']['price_registration'] * 1.4 }]
-        result[result.keys()[1]] = [result[result.keys()[1]], {'price': prices['com']['price_registration'] * 1.4 }]
+        result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
+        result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
 
         return render_template('domains/register.html', result = result,
                                prices=prices)
@@ -42,18 +53,28 @@ def check_availability():
 @bp.route('/purchase', methods=('GET', 'POST'))
 def purchase():
     if request.method == 'POST':
+
+        #Calculate total price
+        amount = 0
+        domains = request.form.getlist('domains')
+        for domain in domains:
+            tdl = domain[domain.index('.')+1:] # extracts tld
+            price = get_domain_price(tdl)
+            price = price + price
+        amount = int(price * 100)
+        import pdb;pdb.set_trace()
+
         # Create charge, then register domain(s)
         stripe.api_key = "sk_test_D1dVenFiwWCObU7vUFHbWgdN"
         stripe_token = request.form['stripeToken']
         charge = stripe.Charge.create(
-            amount = 100,
+            amount = amount,
             currency='gbp',
             description='Domain Registration',
             source=stripe_token,
         )
 
         if charge.status == 'succeeded':
-
             name = request.form['name']
             email = request.form['email']
             telno = request.form['telno']
