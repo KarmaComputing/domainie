@@ -21,7 +21,6 @@ def get_domain_price(tdl, withVAT=True):
                                      'auth-password':app.config['CLOUDNS_AUTH_PASSWORD']
                                     }).text
     prices = json.loads(prices)
-
     price = prices[tdl]['price_registration']
     return round(price * 1.4, 2)
 
@@ -45,7 +44,7 @@ def check_availability():
         # Add prices to result dicts
         result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
         result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
-        stripe_pub_key = app.config['STRIPE_PUP_KEY']
+        stripe_pub_key = app.config['STRIPE_PUB_KEY']
         return render_template('domains/register.html', result = result,
                                stripe_pub_key=stripe_pub_key)
     return render_template('domains/checker.html')
@@ -82,24 +81,27 @@ def purchase():
             city = request.form['city']
             state = request.form['state']
             zip = request.form['zip']
-            result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                          params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 'auth-password':'',
-                                    'domain-name':session['domain'], 'tld':'co.uk',
-                                    'period':1, 'mail':email, 'name':name,
-                                    'company':company, 'address':addr1, 'city':city,
-                                    'state':state, 'zip':zip, 'country':'GB',
-                                    'telno':telno, 'telnocc':44})
 
-            if 'Success' in result.text:
-                # Create DNS Zone for each domain
-                domain_name = session['domain'] + '.co.uk'
-                result = requests.post('https://api.cloudns.net/dns/register.json', 
-                                       params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
-                                                 'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                                 'domain-name':domain_name,
-                                                 'zone-type':'master'})
+            if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
+                result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
+                              params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
+                                        'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                        'domain-name':session['domain'], 'tld':'co.uk',
+                                        'period':1, 'mail':email, 'name':name,
+                                        'company':company, 'address':addr1, 'city':city,
+                                        'state':state, 'zip':zip, 'country':'GB',
+                                        'telno':telno, 'telnocc':44})
+
                 if 'Success' in result.text:
-                    print "DNS Zone created sucessfully"
+                    # Create DNS Zone for each domain
+                    domain_name = session['domain'] + '.co.uk'
+                    result = requests.post('https://api.cloudns.net/dns/register.json', 
+                                           params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                                     'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                                     'domain-name':domain_name,
+                                                     'zone-type':'master'})
+                    if 'Success' in result.text:
+                        print "DNS Zone created sucessfully"
 
             return render_template('domains/thankyou.html')
 
