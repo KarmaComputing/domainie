@@ -1,5 +1,6 @@
 import functools
 import requests
+import stripe
 from flask import json
 
 from flask import (
@@ -30,7 +31,6 @@ def check_availability():
         prices = requests.post('https://api.cloudns.net/domains/pricing-list.json',
                                params = {'auth-id':1697, 'auth-password':'WQ5T\DH5R%mUo'}).text
         prices = json.loads(prices)
-        #['co.uk']['price_registration']
         # Add prices to result dicts
         result[result.keys()[0]] = [result[result.keys()[0]], {'price': prices['co.uk']['price_registration'] * 1.4 }]
         result[result.keys()[1]] = [result[result.keys()[1]], {'price': prices['com']['price_registration'] * 1.4 }]
@@ -42,36 +42,45 @@ def check_availability():
 @bp.route('/purchase', methods=('GET', 'POST'))
 def purchase():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        telno = request.form['telno']
-        company = request.form['company']
-        addr1 = request.form['addr1']
-        city = request.form['city']
-        state = request.form['state']
-        zip = request.form['zip']
-        import pdb;pdb.set_trace()
-        result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                      params = {'auth-id':1697, 'auth-password':'',
-                                'domain-name':session['domain'], 'tld':'co.uk',
-                                'period':1, 'mail':email, 'name':name,
-                                'company':company, 'address':addr1, 'city':city,
-                                'state':state, 'zip':zip, 'country':'GB',
-                                'telno':telno, 'telnocc':44})
+        # Create charge, then register domain(s)
+        stripe.api_key = "sk_test_D1dVenFiwWCObU7vUFHbWgdN"
+        stripe_token = request.form['stripeToken']
+        charge = stripe.Charge.create(
+            amount = 100,
+            currency='gbp',
+            description='Domain Registration',
+            source=stripe_token,
+        )
 
-        if 'Success' in result.text:
-            # Create DNS Zone for each domain
-            domain_name = session['domain'] + '.co.uk'
-            result = requests.post('https://api.cloudns.net/dns/register.json', 
-                                   params = {'auth-id':1697,
-                                             'auth-password':'abc',
-                                             'domain-name':domain_name,
-                                             'zone-type':'master'})
+        if charge.status == 'succeeded':
+
+            name = request.form['name']
+            email = request.form['email']
+            telno = request.form['telno']
+            company = request.form['company']
+            addr1 = request.form['addr1']
+            city = request.form['city']
+            state = request.form['state']
+            zip = request.form['zip']
+            result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
+                          params = {'auth-id':1697, 'auth-password':'',
+                                    'domain-name':session['domain'], 'tld':'co.uk',
+                                    'period':1, 'mail':email, 'name':name,
+                                    'company':company, 'address':addr1, 'city':city,
+                                    'state':state, 'zip':zip, 'country':'GB',
+                                    'telno':telno, 'telnocc':44})
+
             if 'Success' in result.text:
-                print "DNS Zone created sucessfully"
+                # Create DNS Zone for each domain
+                domain_name = session['domain'] + '.co.uk'
+                result = requests.post('https://api.cloudns.net/dns/register.json', 
+                                       params = {'auth-id':1697,
+                                                 'auth-password':'abc',
+                                                 'domain-name':domain_name,
+                                                 'zone-type':'master'})
+                if 'Success' in result.text:
+                    print "DNS Zone created sucessfully"
 
-
-        import pdb;pdb.set_trace()
-        pass
+            return render_template('domains/thankyou.html')
 
     return render_template('domains/purchase.html')
