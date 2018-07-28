@@ -41,7 +41,6 @@ def check_availability(path):
         # Remove any user provided tlds (e.g. strip .co.uk)
         try:
             domain = domain[0:domain.index('.')]
-            session['domain'] = domain
         except ValueError as e:
             pass
 
@@ -90,11 +89,16 @@ def purchase():
             state = "UK"
             zip = request.form['zip']
 
+        for domain in domains:
+            tdl = domain[domain.index('.')+1:] # extracts tld
+
             if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
+                print "Buying" + str(domain)
+                print "#"*80
                 result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
                               params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
                                         'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                        'domain-name':session['domain'], 'tld':'co.uk',
+                                        'domain-name':domain, 'tld':tdl,
                                         'period':1, 'mail':email, 'name':name,
                                         'company':company, 'address':addr1, 'city':city,
                                         'state':state, 'zip':zip, 'country':'GB',
@@ -102,15 +106,14 @@ def purchase():
 
                 if 'Success' in result.text:
                     # Create DNS Zone for each domain
-                    domain_name = session['domain'] + '.co.uk'
                     result = requests.post('https://api.cloudns.net/dns/register.json', 
                                            params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                                      'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                                     'domain-name':domain_name,
+                                                     'domain-name':domain,
                                                      'zone-type':'master'})
                     if 'Success' in result.text:
                         print "DNS Zone created sucessfully"
 
-            return render_template('domains/thankyou.html')
+        return render_template('domains/thankyou.html')
 
     return render_template('domains/purchase.html')
