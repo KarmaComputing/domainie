@@ -119,6 +119,31 @@ def purchase():
                         print "#"*80
                         if 'Success' in result.text:
                             print "DNS Zone created sucessfully"
+                        # Add default A record
+                        print "Creating default A record: '@'"
+                        result = requests.post('https://api.cloudns.net/dns/add-record.json', 
+                                               params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                                         'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                                         'domain-name':''.join([domain, tdl]),
+                                                         'record-type':'A',
+                                                         'host':'@',
+                                                         'record':app.config['DEFAULT_A_RECORD_HOST'],
+                                                         'ttl':60})
+                        print result.text
+                        print "#"*80
+
+                        print "Creating default A record: 'www'"
+                        result = requests.post('https://api.cloudns.net/dns/add-record.json', 
+                                               params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                                         'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                                         'domain-name':''.join([domain, tdl]),
+                                                         'record-type':'A',
+                                                         'host':'www',
+                                                         'record':app.config['DEFAULT_A_RECORD_HOST'],
+                                                         'ttl':60})
+                        print result.text
+                        print "#"*80
+
 
         return render_template('domains/thankyou.html')
 
