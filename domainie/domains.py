@@ -89,30 +89,33 @@ def purchase():
             state = "UK"
             zip = request.form['zip']
 
-        for domain in domains:
-            tdl = domain[domain.index('.')+1:] # extracts tld
+            for webaddress in domains:
+                tdl = webaddress[webaddress.index('.')+1:] # extracts tld
+                domain = webaddress[0:webaddress.index('.')]
 
-            if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
-                print "Buying" + str(domain)
-                print "#"*80
-                result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                              params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
-                                        'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                        'domain-name':domain, 'tld':tdl,
-                                        'period':1, 'mail':email, 'name':name,
-                                        'company':company, 'address':addr1, 'city':city,
-                                        'state':state, 'zip':zip, 'country':'GB',
-                                        'telno':telno, 'telnocc':44})
+                if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
+                    print "Buying" + str(domain)
+                    print "#"*80
+                    result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
+                                  params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
+                                            'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                            'domain-name':domain, 'tld':tdl,
+                                            'period':1, 'mail':email, 'name':name,
+                                            'company':company, 'address':addr1, 'city':city,
+                                            'state':state, 'zip':zip, 'country':'GB',
+                                            'telno':telno, 'telnocc':44})
+                    print result.text
+                    print "#"*80
 
-                if 'Success' in result.text:
-                    # Create DNS Zone for each domain
-                    result = requests.post('https://api.cloudns.net/dns/register.json', 
-                                           params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
-                                                     'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                                     'domain-name':domain,
-                                                     'zone-type':'master'})
                     if 'Success' in result.text:
-                        print "DNS Zone created sucessfully"
+                        # Create DNS Zone for each domain
+                        result = requests.post('https://api.cloudns.net/dns/register.json', 
+                                               params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
+                                                         'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                                         'domain-name':domain,
+                                                         'zone-type':'master'})
+                        if 'Success' in result.text:
+                            print "DNS Zone created sucessfully"
 
         return render_template('domains/thankyou.html')
 
