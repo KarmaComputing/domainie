@@ -109,11 +109,14 @@ def purchase():
 
                     if 'Success' in result.text:
                         # Create DNS Zone for each domain
+                        print "Creating zone"
                         result = requests.post('https://api.cloudns.net/dns/register.json', 
                                                params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                                          'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                                         'domain-name':domain,
+                                                         'domain-name':''.join([domain, tdl]),
                                                          'zone-type':'master'})
+                        print result.text
+                        print "#"*80
                         if 'Success' in result.text:
                             print "DNS Zone created sucessfully"
 
