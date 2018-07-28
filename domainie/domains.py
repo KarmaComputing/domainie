@@ -23,7 +23,7 @@ def get_domain_price(tdl, withVAT=True):
     prices = json.loads(prices)
     price = prices[tdl]['price_registration']
     price = round(price * 1.4, 2)
-    if session['discount']:
+    if session.get('discount'):
         price = price * 0.8 #20% discount
     return price
 
