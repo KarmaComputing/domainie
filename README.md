@@ -3,6 +3,7 @@
     virtualenv venv
     . venv/bin/activate
     pip install flask
+    pip install stripe
     export FLASK_APP=domainie
     export FLASK_DEBUG=TRUE
     flask run
