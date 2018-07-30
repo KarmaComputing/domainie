@@ -2,12 +2,12 @@
 
 
 {% block header %}
-  <h1>{% block title %}Register Domain{% endblock %}</h1>
+  <h1>{% block title %}Domain Results{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 
-<h2>Choose the domains you want to buy</h2>
+<p>The following domains were returned, if they're available you're able to purchase them. If the domain is marked as 'Already Taken' then sadly you won't be able to purchase that domain till the current owner's subscription has expired.</p>
 
 <form method="post" action="{{ url_for('domains.purchase') }}" id="payment-form">
 	<table class="table table-responsive">
@@ -25,9 +25,9 @@
             &pound;{{ "%.2f" | format(result[domain][1]['price']) }}
         </td>
 		<td>{% if result[domain][0]['status'] %}
-			Available 
+			Available
 			{% else %}
-			Already Taken 
+			Already Taken
             {% endif %}
 		</td>
 		<td>{% if result[domain][0]['status'] %}
@@ -42,40 +42,48 @@
     </tbody>
 	</table>
 
-	<div class="form-group">
-		<label for="name">Name</label>
-		<input name="name" id="name" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="email">Email</label>
-		<input name="email" type="email" id="email" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="telno">Phone</label>
-		<input name="telno" type="telco" id="telno" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="company">Company</label>
-		<input name="company" id="company" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="addr1">Address Line 1</label>
-		<input name="addr1" id="addr1" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="city">City</label>
-		<input name="city" id="city" class="form-control" required>
-	</div>
-	<div class="form-group">
-		<label for="zip">Postcode</label>
-		<input name="zip" id="zip" class="form-control" required>
-	</div>
-    
+  <form>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationServer01">Name</label>
+        <input type="text" class="form-control" placeholder="First name" name="name" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="validationServer01">Company</label>
+        <input type="text" class="form-control" placeholder="Example Co." name="company">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationServer01">Email Address</label>
+        <input type="email" class="form-control" placeholder="example@karmacomputing.co.uk" name="email">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationServer02">Telephone Number</label>
+        <input type="tel" class="form-control" placeholder="01234567890" name="telno" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="addr1">City</label>
+        <input type="text" class="form-control" placeholder="Address Line 1" name="addr1" required>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="city">State</label>
+        <input type="text" class="form-control" placeholder="City" name="city" required>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="zip">Zip</label>
+        <input type="text" class="form-control" placeholder="Postcode" name="zip" required>
+      </div>
+    </div>
+  </form>
+
     <div class="form-group">
 	    <label for="card-element">
 	      Credit or debit card
 	    </label>
-	
+
     <div id="card-element">
 	  <!-- A Stripe Element will be inserted here. -->
 	</div>
@@ -83,8 +91,9 @@
 	<!-- Used to display Stripe Element errors. -->
 	<div id="card-errors" role="alert"></div>
   </div>
+  <br />
   <div class="form-group">
-      <button class="btn btn-success">Submit Payment</button>
+      <button class="btn btn-success btn-lg">Submit Payment</button>
   </div>
 </form>
 

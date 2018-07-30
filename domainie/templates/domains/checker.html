@@ -1,15 +1,28 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Website Address Purchase{% endblock %}</h1>
+  <h1 class="text-center">{% block title %}Buy Web Address UK{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 
-  <p>Buy your website address (these are called domain names) using this
-      tool.</p>
+<form method="post">
+  <div class="form-row align-items-center">
+    <div class="col-8">
+      <label class="sr-only" for="domain">Enter the address you want</label>
+      <input name="domain" class="form-control form-control-lg" id="domain"
+      placeholder="Enter domain, e.g. example.co.uk" required>
+    </div>
+    <div class="col-4">
+      <input type="submit" class="btn btn-success btn-lg btn-block" value="Check availability">
+    </div>
+  </div>
+</form>
+<br />
+
+  <p>Use this simple tool to buy your website address (also referred to as domain names). Simply enter the address you wish to purchase into the box above and click 'Check Availability'.</p>
   <p>
-      Steps:
+      Two simple steps:
   </p>
 
   <ol>
@@ -20,15 +33,4 @@
       <li>Purchase your web address quickly, <em>before someone else does!</em></li>
       </li>
   </ol>
-
-  <form method="post">
-    <div class="form-group">
-        <label for="domain">Enter the address you want:</label>
-        <input name="domain" class="form-control" id="domain"
-        placeholder="example.co.uk" required>
-    </div>
-    <div class="form-group">
-        <input type="submit" class="btn btn-success" value="Check availability">
-    </div>
-  </form>
 {% endblock %}

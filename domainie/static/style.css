@@ -1,4 +1,7 @@
 body {
-    padding: 25px;
-    background-color:#50b6d9;  
+    /*background-color:#50b6d9;  */
+}
+
+.bg-kc{
+  background-color: #132136;
 }
