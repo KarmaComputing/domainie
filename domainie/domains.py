@@ -103,6 +103,7 @@ def purchase():
                                             'period':1, 'mail':email, 'name':name,
                                             'company':company, 'address':addr1, 'city':city,
                                             'state':state, 'zip':zip, 'country':'GB',
+                                            'privacy_protection':1,
                                             'telno':telno, 'telnocc':44})
                     print result.text
                     print "#"*80
