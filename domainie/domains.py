@@ -48,6 +48,7 @@ def check_availability(path):
                       params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                 'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
                                 'name':domain, 'tld[]':['co.uk', 'com']}).text)
+        print (result)
         # Add prices to result dicts
         result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
         result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
