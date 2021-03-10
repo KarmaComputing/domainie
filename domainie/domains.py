@@ -50,10 +50,17 @@ def check_availability(path):
                                 'name':domain, 'tld[]':['co.uk', 'com']}).text)
         print (result)
         # Add prices to result dicts
-        result[result.keys()[0]] = [result[result.keys()[0]], {'price': get_domain_price('co.uk') }]
-        result[result.keys()[1]] = [result[result.keys()[1]], {'price': get_domain_price('com')}]
+        domain = request.form.get('domain')
+        ukDomain = domain + '.co.uk'
+        comDomain = domain + '.com'
+
+        domains = []
+
+        domains.append({'domain': ukDomain, 'status': result.get(ukDomain)['status'], 'price': get_domain_price('co.uk')})
+        domains.append({'domain': comDomain, 'status': result.get(comDomain)['status'], 'price': get_domain_price('com')})
+
         stripe_pub_key = app.config['STRIPE_PUB_KEY']
-        return render_template('domains/register.html', result = result,
+        return render_template('domains/register.html', domains = domains,
                                stripe_pub_key=stripe_pub_key)
     return render_template('domains/checker.html')
 
@@ -95,34 +102,34 @@ def purchase():
                 domain = webaddress[0:webaddress.index('.')]
 
                 if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
-                    print "Buying" + str(domain)
-                    print "#"*80
-                    result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                                  params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
-                                            'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                                            'domain-name':domain, 'tld':tdl,
-                                            'period':1, 'mail':email, 'name':name,
-                                            'company':company, 'address':addr1, 'city':city,
-                                            'state':state, 'zip':zip, 'country':'GB',
-                                            'privacy_protection':1,
-                                            'telno':telno, 'telnocc':44})
-                    print result.text
-                    print "#"*80
+                    print ( "Buying" + str(domain))
+                    print ("#"*80)
+                   # result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
+                    #              params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
+                     #                       'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                      #                      'domain-name':domain, 'tld':tdl,
+                       #                     'period':1, 'mail':email, 'name':name,
+                        #                    'company':company, 'address':addr1, 'city':city,
+                         #                   'state':state, 'zip':zip, 'country':'GB',
+                          #                  'privacy_protection':1,
+                           #                 'telno':telno, 'telnocc':44})
+                   # print result.text
+                    print ("#"*80)
 
                     if 'Success' in result.text:
                         # Create DNS Zone for each domain
-                        print "Creating zone"
+                        print ("Creating zone")
                         result = requests.post('https://api.cloudns.net/dns/register.json', 
                                                params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                                          'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
                                                          'domain-name':''.join([domain, tdl]),
                                                          'zone-type':'master'})
-                        print result.text
-                        print "#"*80
+                        print (result.text)
+                        print ("#"*80)
                         if 'Success' in result.text:
-                            print "DNS Zone created sucessfully"
+                            print ("DNS Zone created sucessfully")
                         # Add default A record
-                        print "Creating default A record: '@'"
+                        print ("Creating default A record: '@'")
                         result = requests.post('https://api.cloudns.net/dns/add-record.json', 
                                                params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                                          'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
@@ -131,10 +138,10 @@ def purchase():
                                                          'host':'@',
                                                          'record':app.config['DEFAULT_A_RECORD_HOST'],
                                                          'ttl':60})
-                        print result.text
-                        print "#"*80
+                        print (result.text)
+                        print ("#"*80)
 
-                        print "Creating default A record: 'www'"
+                        print ("Creating default A record: 'www'")
                         result = requests.post('https://api.cloudns.net/dns/add-record.json', 
                                                params = {'auth-id':app.config['CLOUDNS_AUTH_ID'],
                                                          'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
@@ -143,8 +150,8 @@ def purchase():
                                                          'host':'www',
                                                          'record':app.config['DEFAULT_A_RECORD_HOST'],
                                                          'ttl':60})
-                        print result.text
-                        print "#"*80
+                        print (result.text)
+                        print ("#"*80)
 
 
         return render_template('domains/thankyou.html')

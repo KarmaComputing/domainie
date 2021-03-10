@@ -18,21 +18,21 @@
 		<th scope="col">Buy</th>
     </thead>
     <tbody>
-	{% for domain in result %}
+	{% for domain in domains %}
 	  <tr>
-		<td>{{ domain }}</td>
+		<td>{{ domain['domain'] }}</td>
         <td>Price
-            &pound;{{ "%.2f" | format(result[domain][1]['price']) }}
+            &pound;{{ "%.2f" | format(domain['price']) }}
         </td>
-		<td>{% if result[domain][0]['status'] %}
+		<td>{% if domain['status'] %}
 			Available
 			{% else %}
 			Already Taken
             {% endif %}
 		</td>
-		<td>{% if result[domain][0]['status'] %}
+		<td>{% if domain['status'] %}
         <div class="form-group">
-            <input type="checkbox" name="domains" value="{{ domain }}" checked />
+            <input type="checkbox" name="domains" value="{{ domain['domain'] }}" checked />
         </div>
 			{% endif %}
 		</td>
