@@ -119,7 +119,7 @@ def purchase():
                                             'state':state, 'zip':zip, 'country':'GB',
                                             'privacy_protection':1,
                                             'telno':telno, 'telnocc':44})
-                    print result.text
+                    print (result.text)
                     print ("#"*80)
 
                     if 'Success' in result.text:
