@@ -75,8 +75,7 @@ def purchase():
             tdl = domain[domain.index('.')+1:] # extracts tld
             price = get_domain_price(tdl)
             price = price + price
-        amount = int(price * 100)
-
+            amount = int(price * 100)
         # Create charge, then register domain(s)
         stripe.api_key = app.config['STRIPE_PRIV_KEY']
         stripe_token = request.form['stripeToken']
@@ -86,6 +85,13 @@ def purchase():
             description='Domain Registration',
             source=stripe_token,
         )
+        customer = stripe.Customer.create(
+            name = request.form['name'],
+            email= request.form['email'],
+            phone = request.form['telno'],
+            description = "The Company is: " + request.form['company'],
+                 
+         )   
 
         if charge.status == 'succeeded':
             name = request.form['name']
