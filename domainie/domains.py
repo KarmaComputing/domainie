@@ -104,16 +104,16 @@ def purchase():
                 if 'test' not in app.config['STRIPE_PUB_KEY'] and app.config['ENVIRONMENT'] == 'live':
                     print ( "Buying" + str(domain))
                     print ("#"*80)
-                   # result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
-                    #              params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
-                     #                       'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
-                      #                      'domain-name':domain, 'tld':tdl,
-                       #                     'period':1, 'mail':email, 'name':name,
-                        #                    'company':company, 'address':addr1, 'city':city,
-                         #                   'state':state, 'zip':zip, 'country':'GB',
-                          #                  'privacy_protection':1,
-                           #                 'telno':telno, 'telnocc':44})
-                   # print result.text
+                    result = requests.post('https://api.cloudns.net/domains/order-new-domain.json',
+                                  params = {'auth-id':app.config['CLOUDNS_AUTH_ID'], 
+                                            'auth-password':app.config['CLOUDNS_AUTH_PASSWORD'],
+                                            'domain-name':domain, 'tld':tdl,
+                                            'period':1, 'mail':email, 'name':name,
+                                            'company':company, 'address':addr1, 'city':city,
+                                            'state':state, 'zip':zip, 'country':'GB',
+                                            'privacy_protection':1,
+                                            'telno':telno, 'telnocc':44})
+                    print result.text
                     print ("#"*80)
 
                     if 'Success' in result.text:
